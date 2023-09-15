@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import COLORS from "../constants/colors"
 import FormField from "../components/FormField"
 import MyButton from "../components/MyButton"
-import { API } from '../constants/api'
+import API from '../constants/api'
 
 const SignupScreen2 = ({ navigation, route }) => {
 

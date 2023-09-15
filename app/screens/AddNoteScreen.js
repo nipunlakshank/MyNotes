@@ -4,7 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import { useState } from 'react'
 import COLORS from '../constants/colors'
 import MyButton from '../components/MyButton'
-import { API } from '../constants/api'
+import API from '../constants/api'
 
 const AddNoteScreen = ({ navigation, route }) => {
 
@@ -98,7 +98,7 @@ const AddNoteScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#E7EAEC',
+        backgroundColor: COLORS.bg,
     },
     mainWrapper: {
         paddingTop: 60,

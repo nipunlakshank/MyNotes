@@ -4,7 +4,7 @@ import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API } from './constants/api';
+import API from './constants/api';
 
 // Containers
 import HomeContainer from './containers/HomeContainer';
@@ -27,7 +27,6 @@ export default function App() {
 
   useEffect(() => {
     AsyncStorage.getItem("@user_session").then(sessionKey => {
-      console.log(`\n\nuser session: ${sessionKey}\n\n`)
       if (sessionKey == null) {
         setIsLoading(false);
         return
@@ -43,7 +42,6 @@ export default function App() {
       })
         .then(resText => resText.json())
         .then(json => {
-          console.log(`json: ${JSON.stringify(json)}`)
           if (json.success) {
             setData(json)
             setInitialScreen('HomeContainer')

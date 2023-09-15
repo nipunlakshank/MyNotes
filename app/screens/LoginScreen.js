@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import COLORS from "../constants/colors"
 import FormField from "../components/FormField"
 import MyButton from "../components/MyButton"
-import { API } from '../constants/api'
+import API from '../constants/api'
 
 const LoginScreen = ({ navigation, route }) => {
 
@@ -26,9 +26,11 @@ const LoginScreen = ({ navigation, route }) => {
     const [displayErrors, setDisplayErrors] = useState('none')
 
     const tryLogin = async () => {
+        
+        setMobileErrors([])
+        setPasswordErrors([])
         if (mobileErrors.length || passwordErrors.length) {
             setDisplayErrors('flex')
-            return
         }
 
         const res = await fetch(`${API.root}/login`, {
@@ -50,7 +52,7 @@ const LoginScreen = ({ navigation, route }) => {
         }
 
         try {
-            await functions.login({id: res.user.id, token: res.user.token}, res)
+            await functions.login({ id: res.user.id, token: res.user.token }, res)
         } catch (e) {
             console.error(e)
         }
@@ -80,6 +82,7 @@ const LoginScreen = ({ navigation, route }) => {
                         <View style={styles.fieldGroup}>
                             <FormField type="text" label='Mobile'
                                 patterns={mobilePatterns}
+                                value={mobile}
                                 setValue={setMobile}
                                 setErrors={setMobileErrors}
                             />
@@ -90,6 +93,7 @@ const LoginScreen = ({ navigation, route }) => {
                         <View style={styles.fieldGroup}>
                             <FormField type="password" minLength={6} label='Password'
                                 patterns={passwordPatterns}
+                                value={password}
                                 setValue={setPassword}
                                 setErrors={setPasswordErrors}
                             />

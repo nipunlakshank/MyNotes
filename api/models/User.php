@@ -78,7 +78,6 @@ class User extends Model
 
         $user = $this->selectOne(["mobile" => $data['mobile']]);
         if(empty($user) || !password_verify($data['password'], $user->password)){
-            $this->errors['mobile'] = "Wrong mobile or password";
             $this->errors['password'] = "Wrong mobile or password";
             return ["success" => false, "errors" => $this->errors];
         }
@@ -157,7 +156,6 @@ class User extends Model
         } else if (!preg_match('/^(0|\+94)[7][01245678][0-9]{7}$/', $data["mobile"])) {
             $this->errors['mobile'] = "Invalid mobile";
         }else if(empty($this->selectOne(['mobile' => $data['mobile']]))){
-            $this->errors['mobile'] = "Wrong mobile or password";
             $this->errors['password'] = "Wrong mobile or password";
         }
         if (empty($data['password'])) {
