@@ -51,15 +51,16 @@ const NotesScreen = ({ navigation, route }) => {
     }, [])
   )
 
-  if(isLoading){
-    return <LoadingScreen/>
+  if (isLoading) {
+    return <LoadingScreen />
   }
 
   const addItem = (id) => {
     setSelectedItems(new Set([...Array.from(selectedItems), id]))
-    setDeleteButtonDisabled(false)
-    setDeleteButtonStyle(showDeleteButton)
-    console.log(selectedItems)
+    if (selectedItems.size === 0) {
+      setDeleteButtonDisabled(false)
+      setDeleteButtonStyle(showDeleteButton)
+    }
   }
 
   const removeItem = (id) => {
@@ -74,7 +75,6 @@ const NotesScreen = ({ navigation, route }) => {
       setDeleteButtonStyle(hideDeleteButton)
       setDeleteButtonDisabled(true)
     }
-    console.log(selectedItems)
   }
 
   const deleteNotes = async () => {

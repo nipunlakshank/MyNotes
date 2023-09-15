@@ -15,7 +15,6 @@ const AccountScreen = ({ navigation, route }) => {
                     text: "Cancel",
                     style: 'cancel',
                     isPreferred: true,
-                    onPress: () => console.log(user)
                 },
                 {
                     text: "Logout",

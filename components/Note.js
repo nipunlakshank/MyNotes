@@ -15,8 +15,8 @@ const Note = (props) => {
     }
 
     const activeSelectorStyle = {
-        backgroundColor: COLORS.highlight,
-        borderColor: COLORS.accent,
+        backgroundColor: COLORS.accent,
+        borderColor: COLORS.highlight,
     }
 
     const defaultTitleStyle = {
@@ -26,7 +26,23 @@ const Note = (props) => {
         fontWeight: 'bold'
     }
 
-    const [bodyStyle, setBodyStyle] = useState({ display: 'none' })
+    const defaultBodyStyle = {
+        display: 'none'
+    }
+    const activeBodyStyle = {
+        display: 'flex'
+    }
+
+    const defaultItemStyle = {
+        borderWidth: 0,
+    }
+    const activeItemStyle = {
+        borderWidth: 1,
+        borderColor: COLORS.highlight,
+    }
+
+    const [itemStyle, setItemStyle] = useState(defaultItemStyle)
+    const [bodyStyle, setBodyStyle] = useState(defaultBodyStyle)
     const [bodyVisible, setBodyVisible] = useState(false)
     const [selectorStyle, setSelectorStyle] = useState(defaultSelectorStyle)
     const [selected, setSelected] = useState(false)
@@ -45,15 +61,17 @@ const Note = (props) => {
     }
 
     return (
-        <View style={styles.item}>
+        <View style={[styles.item, itemStyle]}>
             <Pressable style={styles.card} onPress={() => {
                 if (bodyVisible) {
-                    setBodyStyle({ display: 'none' })
+                    setItemStyle(defaultItemStyle)
+                    setBodyStyle(defaultBodyStyle)
                     setTitleStyle(defaultTitleStyle)
                     setBodyVisible(false)
                     return
                 }
-                setBodyStyle({ display: 'flex' })
+                setItemStyle(activeItemStyle)
+                setBodyStyle(activeBodyStyle)
                 setTitleStyle(activeTitleStyle)
                 setBodyVisible(true)
             }}>
