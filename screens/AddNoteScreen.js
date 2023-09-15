@@ -21,7 +21,7 @@ const AddNoteScreen = ({ navigation, route }) => {
     // States
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
-    const [category, setCategory] = useState(0)
+    const [category, setCategory] = useState(1)
     const [categoryOpen, setCategoryOpen] = useState(false)
     const [categories, setCategories] = useState(catList)
 
@@ -40,6 +40,9 @@ const AddNoteScreen = ({ navigation, route }) => {
 
         if(res.success){
             Alert.alert("Success", "Note added")
+            setTitle('')
+            setDescription('')
+            setCategory(1)
             return
         }
         Alert.alert("Error", "Something went wrong!")
@@ -107,7 +110,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     form: {
-        // backgroundColor: COLORS.accent,
         marginTop: 50,
         paddingTop: 20,
         paddingHorizontal: 20,

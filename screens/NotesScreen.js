@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react';
 import COLORS from '../constants/colors';
 import { API } from '../constants/app';
 import { useFocusEffect } from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 const NotesScreen = ({ navigation, route }) => {
 
@@ -23,12 +24,13 @@ const NotesScreen = ({ navigation, route }) => {
   const [deleteButtonStyle, setDeleteButtonStyle] = useState(hideDeleteButton)
   const [deleteButtonDisabled, setDeleteButtonDisabled] = useState(true)
   const [noteList, setNoteList] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useFocusEffect(
     useCallback(() => {
       const subscribe = () => {
-        const body = {users_id: user.id, token: user.token}
-        fetch(`${API.root}/notes/get`,{
+        const body = { users_id: user.id, token: user.token }
+        fetch(`${API.root}/notes/get`, {
           method: 'post',
           headers: {
             'Accept': 'application/json',
@@ -36,26 +38,27 @@ const NotesScreen = ({ navigation, route }) => {
           },
           body: JSON.stringify(body)
         })
-        .then(res => res.json())
-        .then(json => {
-          console.log("reloaded.\nnotes:\n", json)
-          setNoteList(json)
-        })
-        .catch(e => console.error(e))
+          .then(res => res.json())
+          .then(json => {
+            setNoteList(json)
+            setIsLoading(false)
+          })
+          .catch(e => console.error(e))
       }
-      console.log('reloaded')
+      console.log('Notes list re-rendered')
       subscribe()
-      return () => {};
-    }, [setNoteList, user])
+      return () => { };
+    }, [])
   )
 
+  if(isLoading){
+    return <LoadingScreen/>
+  }
 
   const addItem = (id) => {
     setSelectedItems(new Set([...Array.from(selectedItems), id]))
-    if (selectedItems.size === 0) {
-      setDeleteButtonDisabled(false)
-      setDeleteButtonStyle(showDeleteButton)
-    }
+    setDeleteButtonDisabled(false)
+    setDeleteButtonStyle(showDeleteButton)
     console.log(selectedItems)
   }
 
@@ -75,7 +78,26 @@ const NotesScreen = ({ navigation, route }) => {
   }
 
   const deleteNotes = async () => {
-    const res = await fetch(`${API.root}/notes/delete`)
+    const res = await fetch(`${API.root}/notes/delete`, {
+      method: 'delete',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ users_id: user.id, token: user.token, ids: Array.from(selectedItems) })
+    })
+      .then(res => res.json())
+      .catch(e => console.error(e))
+
+    if (res.success) {
+      Alert.alert("Success", "Notes deleted!")
+      setNoteList(res.notes)
+      setDeleteButtonDisabled(true)
+      setDeleteButtonStyle(hideDeleteButton)
+      setSelectedItems(new Set([]))
+      return
+    }
+    Alert.alert("Error", "Something went wrong!")
   }
 
   const deleteNotesHandler = () => {
@@ -90,9 +112,7 @@ const NotesScreen = ({ navigation, route }) => {
         style: 'destructive',
         onPress: deleteNotes,
       },
-    ], {
-      cancelable: true,
-    })
+    ], { cancelable: true })
   }
 
   if (noteList.length === 0)
@@ -116,14 +136,14 @@ const NotesScreen = ({ navigation, route }) => {
       <View style={styles.mainWrapper}>
         <Text style={styles.sectionTitle}>Notes</Text>
         <View style={[styles.btnDelete, deleteButtonStyle]} >
-          <Button style={styles.btnDeleteText} title='Delete' color={COLORS.danger} hitSlop={100}
+          <Button title='Delete' color={COLORS.danger} hitSlop={100}
             disabled={deleteButtonDisabled}
             onPress={deleteNotesHandler}
           />
         </View>
         <View style={styles.notesList}>
           {/* This is where the notes go! */}
-          <FlatList data={noteList} extraData={noteList}
+          <FlatList data={noteList}
             renderItem={({ item }) => <Note data={item} addItem={addItem} removeItem={removeItem} />}
           />
         </View>
@@ -152,10 +172,6 @@ const styles = StyleSheet.create({
   },
   btnDelete: {
     alignSelf: 'flex-end',
-  },
-  btnDeleteText: {
-    // color: COLORS.danger,
-    // fontSize: 18,
   },
 });
 

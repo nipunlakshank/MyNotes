@@ -1,18 +1,52 @@
 import 'react-native-gesture-handler'
-import { Button, StyleSheet, Text, View } from "react-native"
+import { Alert, Button, StyleSheet, Text, View } from "react-native"
+import COLORS from '../constants/colors'
 
-const AccountScreen = ({navigation, route}) => {
+const AccountScreen = ({ navigation, route }) => {
 
-    const data = route.params.data
+    const user = route.params.data.user
     const functions = route.params.functions
-    const logout =  functions.logout
+    const logout = functions.logout
+
+    const logoutHandler = () => {
+        Alert.alert("Warning", "Confirm logout ?",
+            [
+                {
+                    text: "Cancel",
+                    style: 'cancel',
+                    isPreferred: true,
+                    onPress: () => console.log(user)
+                },
+                {
+                    text: "Logout",
+                    style: 'destructive',
+                    onPress: () => logout(),
+                }
+            ],
+            { cancelable: true })
+    }
 
     return (
         <View style={styles.container}>
             <View style={styles.mainWrapper}>
                 <Text style={styles.sectionTitle}>Account</Text>
-                <Text>Account screen</Text>
-                <Button title='Logout' onPress={() => logout()} />
+                <View style={styles.btnDelete}>
+                    <Button color={COLORS.danger} title='Logout' onPress={logoutHandler} />
+                </View>
+                <View style={styles.form}>
+                    <View style={styles.field}>
+                        <Text style={styles.label}>Name: </Text>
+                        <Text style={styles.value}>{user.fname} {user.lname}</Text>
+                    </View>
+                    <View style={styles.field}>
+                        <Text style={styles.label}>Mobile: </Text>
+                        <Text style={styles.value}>{user.mobile}</Text>
+                    </View>
+                    <View style={styles.field}>
+                        <Text style={styles.label}>User type: </Text>
+                        <Text style={styles.value}>{user.user_type}</Text>
+                    </View>
+                </View>
             </View>
         </View>
     )
@@ -31,6 +65,28 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         alignSelf: 'center',
+    },
+    btnDelete: {
+        alignSelf: 'flex-end',
+        marginVertical: 10,
+    },
+    form: {
+        marginTop: 40,
+        height: '80%',
+        paddingVertical: 20,
+        gap: 40,
+    },
+    field: {
+        flexDirection: 'row',
+        gap: 10,
+        alignItems: 'center',
+    },
+    label: {
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    value: {
+        fontSize: 16,
     },
 })
 
