@@ -4,7 +4,7 @@ import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API } from './constants/app';
+import { API } from './constants/api';
 
 // Containers
 import HomeContainer from './containers/HomeContainer';

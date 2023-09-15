@@ -4,7 +4,7 @@ import { Alert, Button, FlatList, Pressable, StyleSheet, Text, View } from 'reac
 import Note from '../components/Note';
 import { useCallback, useState } from 'react';
 import COLORS from '../constants/colors';
-import { API } from '../constants/app';
+import { API } from '../constants/api';
 import { useFocusEffect } from '@react-navigation/native';
 import LoadingScreen from './LoadingScreen';
 

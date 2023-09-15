@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import COLORS from "../constants/colors"
 import FormField from "../components/FormField"
 import MyButton from "../components/MyButton"
-import { API } from '../constants/app'
+import { API } from '../constants/api'
 
 const LoginScreen = ({ navigation, route }) => {
 

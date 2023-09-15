@@ -4,7 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import { useState } from 'react'
 import COLORS from '../constants/colors'
 import MyButton from '../components/MyButton'
-import { API } from '../constants/app'
+import { API } from '../constants/api'
 
 const AddNoteScreen = ({ navigation, route }) => {
 
