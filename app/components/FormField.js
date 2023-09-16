@@ -6,12 +6,12 @@ import COLORS from "../constants/colors"
 
 const FormField = (props) => {
 
-    const [labelColor, setLabelColor] = useState('#000')
+    const [labelColor, setLabelColor] = useState(COLORS.black)
 
     // default styles
     const labelDefaultStyle = {
         fontSize: 16,
-        color: '#000',
+        color: COLORS.black,
     }
     const labelFocusedStyle = {
         fontSize: 12,
@@ -80,7 +80,7 @@ const FormField = (props) => {
             return
         }
         setLabelStyle(labelNotMatchedStyle)
-        setLabelColor(COLORS.warning)
+        setLabelColor(COLORS.danger)
     }
 
     const focusValidation = () => {

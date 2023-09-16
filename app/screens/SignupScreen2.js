@@ -7,10 +7,12 @@ import COLORS from "../constants/colors"
 import FormField from "../components/FormField"
 import MyButton from "../components/MyButton"
 import API from '../constants/api'
+import { postData } from '../functions/request'
+
 
 const SignupScreen2 = ({ navigation, route }) => {
 
-    const mainNavigation = route.params.mainNavigation
+    const functions = route.params.functions
     const data = route.params.data
     const mobilePatterns = [
         { regex: /^(\+94|0)7[01245678][0-9]{7}$/, msg: 'Mobile not valid.' },
@@ -35,21 +37,19 @@ const SignupScreen2 = ({ navigation, route }) => {
         if (errors.mobile) {
             setMobileErrors([errors.mobile])
         }
-
         if (errors.password) {
             setPasswordErrors([errors.password])
         }
-
-        console.log(errors)
     }
 
     const trySignup = async () => {
         setDisplayErrors('flex')
-        console.log(`\ndata: ${JSON.stringify(data)}`)
+        setMobileErrors([])
+        setPasswordErrors([])
         if (mobileErrors.length || passwordErrors.length) return
 
-        const res = await request(`${API.root}/register`, { fname: data.fname, lname: data.lname, user_types_id: data.userType, mobile: mobile, password: password }, 'post')
-        console.log(`\nres: ${JSON.stringify(res)}`)
+        const res = await postData('/register', { fname: data.fname, lname: data.lname, user_types_id: data.userType, mobile: mobile, password: password })
+
         if (!res.success) {
             if (res.errors) {
                 setErrors(res.errors)
@@ -60,13 +60,10 @@ const SignupScreen2 = ({ navigation, route }) => {
         const user_session = {id: res.user.id, token: res.user.token}
         try {
             await AsyncStorage.setItem('@user_session', JSON.stringify(user_session))
-            const stored = await AsyncStorage.getItem('@user_session')
-            console.log(`stored: ${stored}`)
+            await functions.login({ id: res.user.id, token: res.user.token }, res)
         } catch (e) {
             console.error(e)
-            return
         }
-        mainNavigation.replace('HomeContainer', { mainNavigation: mainNavigation, data: res })
     }
 
     const renderError = (error) => {
@@ -92,7 +89,6 @@ const SignupScreen2 = ({ navigation, route }) => {
                         <View style={styles.fieldGroup}>
                             <FormField type="password" minLength={6} label='Password'
                                 patterns={passwordPatterns}
-                                setConfirmPasswordRegex={setConfirmPasswordRegex}
                                 setValue={setPassword}
                                 setErrors={setPasswordErrors}
                             />
@@ -113,29 +109,6 @@ const SignupScreen2 = ({ navigation, route }) => {
             </LinearGradient>
         </Pressable>
     )
-}
-
-// Request method
-const request = async (url, body = null, method = "get", headers = { 'Accept': 'application/json' }) => {
-
-    if (method.toLowerCase() === "post" && JSON.stringify(headers) === JSON.stringify({ 'Accept': 'application/json' }))
-        headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-
-    const options = {
-        'method': method,
-        'headers': headers,
-    }
-
-    if (method.toLowerCase() === "post")
-        options.body = JSON.stringify(body)
-
-
-    return await fetch(url, options)
-        .then(res => res.json())
-        .catch(error => { return { 'success': false, 'msg': error, 'occured_in': 'Catch block of postData()' } })
 }
 
 

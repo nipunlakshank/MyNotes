@@ -5,6 +5,7 @@ import { useState } from 'react'
 import COLORS from '../constants/colors'
 import MyButton from '../components/MyButton'
 import API from '../constants/api'
+import { postData } from '../functions/request'
 
 const AddNoteScreen = ({ navigation, route }) => {
 
@@ -26,26 +27,18 @@ const AddNoteScreen = ({ navigation, route }) => {
     const [categories, setCategories] = useState(catList)
 
     const addNote = async () => {
-        const body = {user: user, note: {title: title, description: description, categories_id: category}}
-        const res = await fetch(`${API.root}/notes/add`, {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body),
-        })
-        .then(response => response.json())
-        .catch(e => console.error(e))
+        const body = {user: user, note: {title: title === '' ? 'Untitled' : title, description: description, categories_id: category}}
+        const res = await postData('/notes/add', body)
 
-        if(res.success){
-            Alert.alert("Success", "Note added")
-            setTitle('')
-            setDescription('')
-            setCategory(1)
+        if(!res.success){
+            Alert.alert("Error", "Something went wrong!")
             return
         }
-        Alert.alert("Error", "Something went wrong!")
+
+        Alert.alert("Success", "Note added")
+        setTitle('')
+        setDescription('')
+        setCategory(1)
     }
 
     return (

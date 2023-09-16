@@ -7,6 +7,7 @@ import COLORS from '../constants/colors';
 import API from '../constants/api';
 import { useFocusEffect } from '@react-navigation/native';
 import LoadingScreen from './LoadingScreen';
+import { deleteData, postData } from '../functions/request';
 
 const NotesScreen = ({ navigation, route }) => {
 
@@ -26,29 +27,18 @@ const NotesScreen = ({ navigation, route }) => {
   const [noteList, setNoteList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
+
+  const renderNoteList = async () => {
+    const res = await postData('/notes/get', { users_id: user.id, token: user.token })
+    setNoteList(res)
+    setIsLoading(false)
+  }
+
   useFocusEffect(
     useCallback(() => {
-      const subscribe = () => {
-        const body = { users_id: user.id, token: user.token }
-        fetch(`${API.root}/notes/get`, {
-          method: 'post',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body)
-        })
-          .then(res => res.json())
-          .then(json => {
-            setNoteList(json)
-            setIsLoading(false)
-          })
-          .catch(e => console.error(e))
-      }
-      console.log('Notes list re-rendered')
-      subscribe()
-      return () => { };
-    }, [])
+      renderNoteList()
+      return () => setNoteList([]);
+    }, [setNoteList])
   )
 
   if (isLoading) {
@@ -78,26 +68,19 @@ const NotesScreen = ({ navigation, route }) => {
   }
 
   const deleteNotes = async () => {
-    const res = await fetch(`${API.root}/notes/delete`, {
-      method: 'delete',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ users_id: user.id, token: user.token, ids: Array.from(selectedItems) })
-    })
-      .then(res => res.json())
-      .catch(e => console.error(e))
 
-    if (res.success) {
-      Alert.alert("Success", "Notes deleted!")
-      setNoteList(res.notes)
-      setDeleteButtonDisabled(true)
-      setDeleteButtonStyle(hideDeleteButton)
-      setSelectedItems(new Set([]))
+    const res = await deleteData('/notes/delete', { users_id: user.id, token: user.token, ids: Array.from(selectedItems) })
+
+    if (!res.success) {
+      Alert.alert("Error", "Something went wrong!")
       return
     }
-    Alert.alert("Error", "Something went wrong!")
+
+    Alert.alert("Success", "Notes deleted!")
+    setNoteList(res.notes)
+    setDeleteButtonDisabled(true)
+    setDeleteButtonStyle(hideDeleteButton)
+    setSelectedItems(new Set([]))
   }
 
   const deleteNotesHandler = () => {
@@ -122,7 +105,6 @@ const NotesScreen = ({ navigation, route }) => {
         <View style={styles.mainWrapper}>
           <Text style={styles.sectionTitle}>Notes</Text>
           <View style={[styles.notesList, { height: '80%', alignItems: 'center', justifyContent: 'center' }]}>
-            {/* This is where the notes go! */}
             <Text>No notes found</Text>
           </View>
         </View>

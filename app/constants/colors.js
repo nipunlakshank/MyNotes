@@ -1,5 +1,7 @@
 const COLORS = {
     bg: '#E7EAEC',
+    bg_dark: '#545768',
+    bg_highlight: '#A4F9A3',
     primary: '#808BEE',
     secondary: '#0D1A90',
     accent: '#588BEC',

@@ -7,6 +7,7 @@ import FormField from "../components/FormField"
 import MyButton from "../components/MyButton"
 import LoadingScreen from './LoadingScreen'
 import API from '../constants/api'
+import { getData } from '../functions/request'
 
 const SignupScreen1 = ({ navigation, route }) => {
 
@@ -22,28 +23,22 @@ const SignupScreen1 = ({ navigation, route }) => {
     const [isLoading, setIsLoading] = useState(true)
     const [userTypes, setUserTypes] = useState([])
 
+
     useEffect(() => {
-        fetch(`${API.root}/usertypes/get`, {
-            method: 'get',
-            headers: {
-                'Accept': 'application/json',
-            },
-        })
-        .then(res => res.json())
-        .then(json => {
-            console.log(`\nusertypes: ${JSON.stringify(json)}\n`)
+        const loadUserTypes = async () => {
+            const res = await getData('/usertypes/get')
             const items = []
-            json.forEach(type => {
-                const formatted = {label: type.name, value: type.id}
+            res.forEach(type => {
+                const formatted = { label: type.name, value: type.id }
                 items.push(formatted)
             })
             setUserTypes(items)
             setIsLoading(false)
-        })
-        .catch(e => console.error(e))
+        }
+        loadUserTypes()
     }, [])
 
-    if(isLoading){
+    if (isLoading) {
         return <LoadingScreen />
     }
 

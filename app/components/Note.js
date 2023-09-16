@@ -98,7 +98,7 @@ const Note = (props) => {
 
 const styles = StyleSheet.create({
     item: {
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.white,
         borderRadius: 10,
         marginVertical: 5,
         minHeight: 60,
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     noteIcon: {
         width: 50,
         height: 50,
-        backgroundColor: '#DED4FA',
+        backgroundColor: COLORS.bg_highlight,
         borderRadius: 5,
         marginRight: 15,
         flexDirection: 'row',

@@ -12,6 +12,7 @@ import LoginContainer from './containers/LoginContainer';
 
 // Screens
 import LoadingScreen from './screens/LoadingScreen';
+import { postData } from './functions/request';
 
 export default function App() {
 
@@ -31,35 +32,26 @@ export default function App() {
         setIsLoading(false);
         return
       }
+      const session = JSON.parse(sessionKey)
+      const authorize = async () => {
+        const res = await postData('/login', session)
+        if (res.success) {
+          setData(res)
+          setInitialScreen('HomeContainer')
+          setIsLoading(false)
+          return
+        }
 
-      fetch(`${API.root}/login`, {
-        method: 'post',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: sessionKey,
-      })
-        .then(resText => resText.json())
-        .then(json => {
-          if (json.success) {
-            setData(json)
-            setInitialScreen('HomeContainer')
-            setIsLoading(false)
-            return
-          }
-
-          if (json.msg && json.msg.toLowerCase() === "user not found") {
-            AsyncStorage.removeItem("@user_session")
-              .then(val => {
-                console.log(val)
-                setIsLoading(false)
-              })
-              .catch(e => console.error(e))
-          }
-        })
-        .catch(e => console.error(e))
-
+        if (res.msg && res.msg.toLowerCase() === "user not found") {
+          AsyncStorage.removeItem("@user_session")
+            .then(val => {
+              console.log(val)
+              setIsLoading(false)
+            })
+            .catch(e => console.error(e))
+        }
+      }
+      authorize()
     })
       .catch(e => console.error(e))
   }, [])

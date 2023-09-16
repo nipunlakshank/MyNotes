@@ -6,6 +6,7 @@ import COLORS from "../constants/colors"
 import FormField from "../components/FormField"
 import MyButton from "../components/MyButton"
 import API from '../constants/api'
+import { postData } from '../functions/request'
 
 const LoginScreen = ({ navigation, route }) => {
 
@@ -26,23 +27,14 @@ const LoginScreen = ({ navigation, route }) => {
     const [displayErrors, setDisplayErrors] = useState('none')
 
     const tryLogin = async () => {
-        
+
         setMobileErrors([])
         setPasswordErrors([])
         if (mobileErrors.length || passwordErrors.length) {
             setDisplayErrors('flex')
         }
 
-        const res = await fetch(`${API.root}/login`, {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ mobile: mobile, password: password })
-        })
-            .then(response => response.json())
-            .catch(e => console.error(e))
+        const res = await postData('/login', { mobile: mobile, password: password })
 
         if (!res.success) {
             if (res.errors) {
