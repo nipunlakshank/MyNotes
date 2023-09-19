@@ -2,7 +2,11 @@
 
 // lazy/auto load models
 spl_autoload_register(function ($class_name) {
-    require_once "api/models/$class_name.php";
+    $path = "api/models/$class_name.php";
+    if(!file_exists($path)){
+        exit("No file found");
+    }
+    require_once $path;
 });
 
 require_once "config.php";

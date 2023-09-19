@@ -1,12 +1,12 @@
 import 'react-native-gesture-handler'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { FlatList, Keyboard, Pressable, StyleSheet, Text, View } from "react-native"
 import { LinearGradient } from 'expo-linear-gradient'
 import COLORS from "../constants/colors"
 import FormField from "../components/FormField"
 import MyButton from "../components/MyButton"
-import API from '../constants/api'
 import { postData } from '../functions/request'
+import { useFocusEffect } from '@react-navigation/native'
 
 const LoginScreen = ({ navigation, route }) => {
 
@@ -22,9 +22,24 @@ const LoginScreen = ({ navigation, route }) => {
     // states
     const [mobile, setMobile] = useState('')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const [mobileErrors, setMobileErrors] = useState(['Mobile not valid'])
     const [passwordErrors, setPasswordErrors] = useState(['Password cannot be empty'])
     const [displayErrors, setDisplayErrors] = useState('none')
+
+
+    useFocusEffect(
+        useCallback(() => {
+            const focusLost = () => {
+                setMobile('')
+                setPassword('')
+                setMobileErrors([])
+                setPasswordErrors([])
+                setDisplayErrors('none')
+            }
+            return focusLost
+        }, [])
+    )
 
     const tryLogin = async () => {
 
@@ -86,6 +101,8 @@ const LoginScreen = ({ navigation, route }) => {
                             <FormField type="password" minLength={6} label='Password'
                                 patterns={passwordPatterns}
                                 value={password}
+                                showPassword={showPassword}
+                                setShowPassword={setShowPassword}
                                 setValue={setPassword}
                                 setErrors={setPasswordErrors}
                             />

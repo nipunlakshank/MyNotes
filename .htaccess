@@ -1,5 +1,12 @@
 RewriteEngine On
 
+# Forbid direct access for /api and /app directories via requests
+RewriteRule ^(api|app)/?.*$ - [F,L]
+
+# If the requested FILE doesn't exists execute below RewriteRule
 RewriteCond %{REQUEST_FILENAME} !-f
+# If the requested DIRECTORY doesn't exists execute below RewriteRule
 RewriteCond %{REQUEST_FILENAME} !-d
+
+# Forward every request to index.php with url as a 'GET' parameter
 RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]

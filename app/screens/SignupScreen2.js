@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import COLORS from "../constants/colors"
 import FormField from "../components/FormField"
 import MyButton from "../components/MyButton"
-import API from '../constants/api'
 import { postData } from '../functions/request'
 
 
@@ -98,7 +97,7 @@ const SignupScreen2 = ({ navigation, route }) => {
                         </View>
                     </View>
                     <View style={styles.formButtons}>
-                        <MyButton title="← Go Back" width={140} fontSize={14} color={COLORS.grey} backgroundColor={COLORS.black}
+                        <MyButton title="← Back" width={140} fontSize={14} color={COLORS.grey} backgroundColor={COLORS.black}
                             onPress={() => navigation.goBack()}
                         />
                         <MyButton title="Signup" width={140} color={COLORS.white} backgroundColor={COLORS.highlight} fontWeight="bold"

@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import NotesScreen from '../screens/NotesScreen'
 import AddNoteScreen from '../screens/AddNoteScreen'
 import AccountScreen from '../screens/AccountScreen'
+import { useState } from 'react'
 
 const HomeContainer = ({ navigation, route }) => {
 
@@ -25,11 +26,10 @@ const HomeContainer = ({ navigation, route }) => {
   const initParams = {
     data: data,
     functions: {
-      'logout': logout
-    }
+      'logout': logout,
+    },
   }
 
-  console.log(`home-data: ${JSON.stringify(data)}`)
   const Tab = createMaterialBottomTabNavigator()
 
   // Screen names

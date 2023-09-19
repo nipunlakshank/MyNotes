@@ -1,14 +1,15 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native"
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import DropDownPicker from 'react-native-dropdown-picker'
 import COLORS from "../constants/colors"
+import { useFocusEffect } from "@react-navigation/native"
 
 const FormField = (props) => {
 
     const [labelColor, setLabelColor] = useState(COLORS.black)
 
-    // default styles
+    // label styles
     const labelDefaultStyle = {
         fontSize: 16,
         color: COLORS.black,
@@ -29,31 +30,55 @@ const FormField = (props) => {
         color: COLORS.danger,
     }
 
+    const defaultSubmit = () => {
+        if (!isFocused && parentValue === '') {
+            setLabelStyle(labelDefaultStyle)
+        }
+    }
+
     const errors = []
-    const type = props.type ? props.type : "text"
-    const parentItems = props.items ? props.items : []
-    const label = props.label ? props.label : "Label"
-    const patterns = props.patterns ? props.patterns : [/.+/]
-    const minLength = props.minLength ? props.minLength : 0
-    const maxLength = props.maxLength ? props.maxLength : 254
-    const defaultValue = props.value ? props.value : ''
-    const setParentValue = props.setValue ? props.setValue : value => { return }
-    const setParentItems = props.setItems ? props.setItems : items => { return }
-    const setParentSelectorOpen = props.setOpen ? props.setOpen : value => { return }
-    const parentOpen = props.open ? props.open : value => { return }
-    const setErrors = props.setErrors ? props.setErrors : error => { return }
-    const onSubmit = props.onSubmit ? props.onSubmit : () => { return }
-    const setConfirmPasswordRegex = props.setConfirmPasswordRegex ? props.setConfirmPasswordRegex : regex => { return }
+    const type = props.type ?? "text"
+    const parentItems = props.items ?? []
+    const label = props.label ?? "Label"
+    const patterns = props.patterns ?? [/.+/]
+    const minLength = props.minLength ?? 0
+    const maxLength = props.maxLength ?? 254
+    const parentValue = props.value ?? ''
+    const setParentValue = props.setValue ?? (value => { return })
+    const setParentItems = props.setItems ?? (items => { return })
+    const setParentSelectorOpen = props.setOpen ?? (value => { return })
+    const parentSelectorOpen = props.open ?? (value => { return })
+    const setErrors = props.setErrors ?? (error => { return })
+    const onSubmit = props.onSubmit ?? defaultSubmit
+    const setConfirmPasswordRegex = props.setConfirmPasswordRegex ?? (regex => { return })
+    const showPassword = props.showPassword ?? true
+    const setShowPassword = props.setShowPassword ?? (val => { return })
 
     // States
     const [labelStyle, setLabelStyle] = useState(labelDefaultStyle)
-    const [value, setValue] = useState(defaultValue)
+    const [value, setValue] = useState(parentValue)
     const [items, setItems] = useState(parentItems)
     const [showText, setShowText] = useState(false)
     const [icon, setIcon] = useState('eye-outline')
-    const [selecterOpen, setSelecterOpen] = useState(parentOpen)
+    const [selecterOpen, setSelecterOpen] = useState(parentSelectorOpen)
+    const [isFocused, setIsFocused] = useState(false)
     let patternMatched = false
 
+
+    useFocusEffect(
+        useCallback(() => {
+            const focusLost = () => {
+                setParentValue('')
+                setLabelStyle(labelDefaultStyle)
+                setIcon('eye-outline')
+                setShowPassword(false)
+                setParentSelectorOpen(false)
+                setErrors([])
+                setLabelColor(COLORS.black)
+            }
+            return focusLost
+        }, [])
+    )
 
     const validate = text => {
 
@@ -72,19 +97,24 @@ const FormField = (props) => {
         }
 
         patternMatched = errors.length === 0
-        setErrors(errors)
 
         if (patternMatched) {
             setLabelStyle(labelMatchedStyle)
             setLabelColor(COLORS.success)
             return
         }
+        setErrors(errors)
         setLabelStyle(labelNotMatchedStyle)
         setLabelColor(COLORS.danger)
     }
 
-    const focusValidation = () => {
+    const focusHandler = () => {
         setLabelStyle(labelFocusedStyle)
+    }
+
+    const blurHandler = () => {
+        if (parentValue === '')
+            setLabelStyle(labelDefaultStyle)
     }
 
     const styles = StyleSheet.create({
@@ -104,7 +134,7 @@ const FormField = (props) => {
         },
         input: {
             paddingLeft: 20,
-            paddingRight: props.secureTextEntry ? 40 : 20,
+            paddingRight: props.type.toLowerCase() === 'password' ? 40 : 20,
             paddingTop: 20,
             paddingBottom: 10,
             fontSize: 16,
@@ -133,20 +163,15 @@ const FormField = (props) => {
                 <DropDownPicker style={styles.dropdown} autoCorrect={false}
                     placeholder={label}
                     placeholderStyle={{ fontSize: 16 }}
-                    open={selecterOpen}
-                    value={value}
-                    items={items}
-                    setOpen={opened => {
-                        setSelecterOpen(opened)
-                        setParentSelectorOpen(opened)
-                    }}
-                    setValue={selected => {
+                    open={parentSelectorOpen}
+                    value={parentValue}
+                    items={parentItems}
+                    setOpen={setParentSelectorOpen}
+                    setValue={val => {
                         setErrors([])
-                        setValue(selected)
-                        setParentValue(selected)
+                        setParentValue(val)
                     }}
                     setItems={items => {
-                        setItems(items)
                         setParentItems(items)
                     }}
                 />
@@ -159,29 +184,31 @@ const FormField = (props) => {
                 <Text style={[styles.label, labelStyle]}>{label}</Text>
                 <Pressable style={styles.icon} hitSlop={10}
                     onPress={() => {
-                        if (showText) {
+                        if (showPassword) {
                             setIcon('eye-outline')
-                            setShowText(false)
+                            setShowPassword(false)
                             return
                         }
                         setIcon('eye-off-outline')
-                        setShowText(true)
+                        setShowPassword(true)
                     }}
                 >
                     <Ionicons name={icon} size={20} />
                 </Pressable>
-                <TextInput style={styles.input} secureTextEntry={!showText} autoCorrect={false}
+                <TextInput style={styles.input} secureTextEntry={!showPassword} autoCorrect={false}
+                    value={parentValue}
                     onChangeText={text => {
                         setValue(text)
                         setParentValue(text)
                         setConfirmPasswordRegex(new RegExp(`/^${text}$/`))
                         validate(text)
-                    }}
-                    onFocus={focusValidation}
-                    onBlur={() => {
-                        if (value === '')
+                        if (!isFocused && parentValue === '') {
                             setLabelStyle(labelDefaultStyle)
+                        }
                     }}
+                    onFocus={focusHandler}
+                    onBlur={blurHandler}
+                    blurOnSubmit={true}
                     onSubmitEditing={onSubmit}
                     onPressIn={() => {
                         setParentSelectorOpen(false)
@@ -195,16 +222,17 @@ const FormField = (props) => {
         <View style={styles.container}>
             <Text style={[styles.label, labelStyle]}>{props.label}</Text>
             <TextInput style={styles.input} autoCorrect={false}
+                value={parentValue}
                 onChangeText={text => {
                     setValue(text)
                     setParentValue(text)
                     validate(text)
-                }}
-                onFocus={focusValidation}
-                onBlur={() => {
-                    if (value === '')
+                    if (!isFocused && parentValue === '') {
                         setLabelStyle(labelDefaultStyle)
+                    }
                 }}
+                onFocus={focusHandler}
+                onBlur={blurHandler}
                 onSubmitEditing={onSubmit}
                 onPressIn={() => {
                     setParentSelectorOpen(false)

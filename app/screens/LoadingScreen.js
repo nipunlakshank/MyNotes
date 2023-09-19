@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler'
-import { SafeAreaView, StyleSheet, Text, View } from "react-native"
+import { SafeAreaView, StyleSheet, Text } from "react-native"
 
 const LoadingScreen = () => {
     return (

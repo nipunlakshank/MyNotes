@@ -4,7 +4,6 @@ import { Alert, Button, FlatList, Pressable, StyleSheet, Text, View } from 'reac
 import Note from '../components/Note';
 import { useCallback, useState } from 'react';
 import COLORS from '../constants/colors';
-import API from '../constants/api';
 import { useFocusEffect } from '@react-navigation/native';
 import LoadingScreen from './LoadingScreen';
 import { deleteData, postData } from '../functions/request';
@@ -36,16 +35,25 @@ const NotesScreen = ({ navigation, route }) => {
 
   useFocusEffect(
     useCallback(() => {
+
+      setIsLoading(true)
       renderNoteList()
-      return () => setNoteList([]);
-    }, [setNoteList])
+
+      const focusLost = () => {
+        setNoteList([])
+        setDeleteButtonDisabled(true)
+        setDeleteButtonStyle(hideDeleteButton)
+        setSelectedItems(new Set([]))
+      }
+      return focusLost
+    }, [])
   )
 
   if (isLoading) {
     return <LoadingScreen />
   }
 
-  const addItem = (id) => {
+  const addItem = id => {
     setSelectedItems(new Set([...Array.from(selectedItems), id]))
     if (selectedItems.size === 0) {
       setDeleteButtonDisabled(false)
@@ -53,7 +61,7 @@ const NotesScreen = ({ navigation, route }) => {
     }
   }
 
-  const removeItem = (id) => {
+  const removeItem = id => {
     const arr = Array.from(selectedItems)
     const index = arr.indexOf(id)
     if (index > -1) {
@@ -149,12 +157,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   notesList: {
-    marginTop: 30,
+    marginTop: 20,
     marginBottom: 150,
   },
   btnDelete: {
     alignSelf: 'flex-end',
   },
 });
+
 
 export default NotesScreen

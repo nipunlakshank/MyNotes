@@ -6,7 +6,6 @@ import COLORS from "../constants/colors"
 import FormField from "../components/FormField"
 import MyButton from "../components/MyButton"
 import LoadingScreen from './LoadingScreen'
-import API from '../constants/api'
 import { getData } from '../functions/request'
 
 const SignupScreen1 = ({ navigation, route }) => {
@@ -56,7 +55,6 @@ const SignupScreen1 = ({ navigation, route }) => {
     }
 
     const tryNext = () => {
-        console.log(`\nuser type: ${userType}\nfname: ${fname}\nlname: ${lname}\nfname errors: ${fnameErrors}\nlname errors: ${lnameErrors}\nuser type errors: ${userTypeErrors}`)
         setDisplayErrors('flex')
         if (fnameErrors.length || lnameErrors.length || userTypeErrors.length) return
         navigation.navigate('Signup2', { mainNavigation: mainNavigation, data: { fname: fname, lname: lname, userType: userType } })

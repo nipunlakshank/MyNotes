@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native"
+import { Keyboard, Pressable, StyleSheet, Text, View } from "react-native"
 import COLORS from "../constants/colors"
 
 
@@ -35,7 +35,10 @@ const MyButton = props => {
 
     return (
         <Pressable style={styles.container}
-            onPress={props.onPress}
+            onPress={() => {
+                Keyboard.dismiss()
+                props.onPress()
+            }}
             onLongPress={props.onLongPress}
         >
             <View style={styles.bg}>

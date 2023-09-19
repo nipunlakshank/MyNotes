@@ -4,10 +4,10 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import { useState } from 'react'
 import COLORS from '../constants/colors'
 import MyButton from '../components/MyButton'
-import API from '../constants/api'
 import { postData } from '../functions/request'
+import NotesScreen from './NotesScreen'
 
-const AddNoteScreen = ({ navigation, route }) => {
+const AddNoteScreen = ({ route }) => {
 
     const data = route.params.data
     const user = {id: data.user.id, token: data.user.token}
@@ -81,7 +81,7 @@ const AddNoteScreen = ({ navigation, route }) => {
                     </View>
                 </View>
                 <View style={styles.buttonPanel}>
-                    <MyButton title="Add" fontWeight='bold' width='80%' color={COLORS.white} onPress={addNote} />
+                    <MyButton title="Add" fontWeight='bold' width='60%' color={COLORS.white} onPress={addNote} />
                 </View>
             </View>
         </Pressable>
